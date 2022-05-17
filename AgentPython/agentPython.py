@@ -1,5 +1,6 @@
 # TODO: You should write the function computeTrajectory
 
+from re import T
 import sys
 import os
 import time
@@ -25,6 +26,7 @@ from turtle import up
 #  
 #  ****************************************************************************************************************
 def computeTrajectory(robotPos, goalPos, distanceSensors):
+
 	trajectory = []
 	
 	goalTheta = math.atan2((goalPos[1]-robotPos[1]), (goalPos[0]-robotPos[0]))
@@ -33,49 +35,16 @@ def computeTrajectory(robotPos, goalPos, distanceSensors):
 	x = goalDist * math.cos(goalTheta)
 	y = goalDist * math.sin(goalTheta)
 
-	rightTheta = robotPos[2] - math.atan2(0,1)
-	rightX = -1/10*distanceSensors[0] * math.cos(rightTheta)
-	rightY = -1/distanceSensors[0] * math.sin(rightTheta)
-
-	upRightTheta = robotPos[2] - math.atan2(1,1)
-	upRightX = -1/10*distanceSensors[2] * math.cos(upRightTheta)
-	upRightY = -1/distanceSensors[2] * math.sin(upRightTheta)
-
+	k = 75
+	for i in range(15):
+		dist = distanceSensors[i]
+		theta = robotPos[2] + math.pi*((i-4)/8)
+		x -= ((k/dist)**2)*math.cos(theta)
+		y -= ((k/dist)**2)*math.sin(theta)
 	
-	upTheta = robotPos[2]
-	upX = -1/10*distanceSensors[4] * math.cos(upTheta)
-	upY = -1/10*distanceSensors[4] * math.sin(upTheta)
-
-	upLeftTheta = robotPos[2] + math.atan2(1,1)
-	upLeftX = -1/10*distanceSensors[6] * math.cos(upLeftTheta)
-	upLeftY = -1/10*distanceSensors[6] * math.sin(upLeftTheta)
-
-	leftTheta = robotPos[2] + math.atan2(1,0)
-	leftX = -1/10*distanceSensors[8] * math.cos(leftTheta)
-	leftY = -1/10*distanceSensors[8] * math.sin(leftTheta)
-
-	downLeftTheta = robotPos[2] + math.atan2(-1,1)
-	downLeftX = -1/10*distanceSensors[10] * math.cos(downLeftTheta)
-	downLeftY = -1/10*distanceSensors[10] * math.sin(downLeftTheta)
-
-	downTheta = -robotPos[2]
-	downX = -1/10*distanceSensors[12] * math.cos(robotPos[2] + downTheta)
-	downY = -1/10*distanceSensors[12] * math.sin(robotPos[2] + downTheta)
-
-	try:
-		downRightTheta = robotPos[2] + math.atan(-1,-1)
-		downRightX = -1/10*distanceSensors[14] * math.cos(downRightTheta)
-		downRightY = distanceSensors[14] * math.sin(downRightTheta)
-
-		trajectory.append(x + rightX + upRightX + upX + upLeftX + leftX + downLeftX + downX + downRightX)
-		trajectory.append(y + rightY + upRightY + upY + upLeftY + leftY + downLeftY + downY + downRightY)
-	except:
-		trajectory.append(x + rightX + upRightX + upX + upLeftX + leftX + downLeftX + downX)
-		trajectory.append(y + rightY + upRightY + upY + upLeftY + leftY + downLeftY + downY)
-
-	# call this function to normalize the trajectory vector (so that it is a unit vector)
+	trajectory.append(x)
+	trajectory.append(y)
 	trajectory = normalize(trajectory)
-
 	return trajectory
 
 # normalizes the vector
